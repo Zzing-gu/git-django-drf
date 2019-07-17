@@ -10,5 +10,6 @@ urlpatterns = [
     path('init/', views.GRPCInitView.as_view()),
     path('add/', views.FileUploadView.as_view()),
 
-    path('repo/', views.RepoView.as_view())
+    path('repo/', views.RepoView.as_view()),
+    path('tree/', views.TreeView.as_view())
 ]

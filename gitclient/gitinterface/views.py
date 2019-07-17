@@ -32,7 +32,7 @@ class GRPCInitView(APIView):
         path = request.data['path']
         channel = grpc.insecure_channel('localhost:50051')
         stub = git_pb2_grpc.GitStub(channel)
-        response = stub.CreateAndInitDirectory(git_pb2.Request_Path(path=path))
+        response = stub.CreateAndInitDirectory(git_pb2.RequestPath(path=path))
         responsee = { 'result':response.result}        
         #print(response)                                
         return Response(responsee)
@@ -46,8 +46,9 @@ class FileUploadView(APIView):
         channel = grpc.insecure_channel('localhost:50051')
         stub = git_pb2_grpc.GitStub(channel)
 
-        filename = 'zzz/test/'
-        filename +=  file_obj._get_name()
+        # filename = 'zzz/test/'
+        # filename +=  file_obj._get_name()
+        filename = file_obj._get_name()
         filedata = file_obj.file.read()
 
         regex = re.compile(".exe$")
@@ -57,7 +58,7 @@ class FileUploadView(APIView):
             print(mo.group())
             filemode = 100755
 
-        response = stub.AddOrUpdateFile(git_pb2.Request_File(path="nexivil6/hosuk6/", filedata=filedata, filename=filename, filemode=filemode))
+        response = stub.AddOrUpdateFile(git_pb2.RequestFile(path="nexivil6/hosuk6/", filedata=filedata, filename=filename, filemode=filemode))
         status = { 'result':response.result}
         return Response(status)
 
@@ -69,41 +70,25 @@ class RepoView(APIView):
         channel = grpc.insecure_channel('localhost:50051')
         stub = git_pb2_grpc.GitStub(channel)
 
-        response = stub.GetRepoTree(git_pb2.Request_Path(path="nexivil6/hosuk6"))
-        status = {'trees' : response.trees}
-        print(type(response.trees[0]))
-
-        trees = response.trees
-        print(trees)
-        tarr = []
-        #serializer = TreeSerializer(response.trees[0])
-        #print(serializer.data)
-        #json = JSONRenderer().render(serializer.data)
-        #tarr.append(json)
-        #tarr.append(json)
-        serializer = TreeSerializer(trees , many=True)
-        json = JSONRenderer().render(serializer.data)
-        #print(json)
-        # for tree in trees:
-        #     serializer = TreeSerializer(tree)
-        #     json = JSONRenderer().render(serializer.data)
-        #     tarr.append(json)
-
-        #response = JsonResponse(trees,safe=False)
-
-        #dictObj = MessageToDict(trees, preserving_proto_field_name=True)
-        #print(dictObj)
-        #jsonObj = MessageToJson(dictObj, including_default_value_fields=True)
-
-        #jsonob = json.dumps(trees)
-
-        # for tree in trees:
-        #     obj = MessageToJson(tree)
-        #     tarr.append(obj)
-
-        #json = JSONRenderer().render(tarr)
-
-        #jsonObj = MessageToJson(trees[1], including_default_value_fields=True)
+        response = stub.GetRepoTree(git_pb2.RequestPath(path="nexivil6/hosuk6"))
+        print(type(response))
+        dictObj = MessageToJson(response, preserving_proto_field_name=True)
+        print(dictObj)
         
-        #tarr.append(jsonObj)
-        return Response({'hihi':'wer', 'trees':json})
+        return Response({'hihi':'wer', 'trees':dictObj})
+
+
+
+class TreeView(APIView):
+
+    def post(self, request, formant=None):
+        hash = request.data['hash']
+        channel = grpc.insecure_channel('localhost:50051')
+        stub = git_pb2_grpc.GitStub(channel)
+
+        response = stub.RenderTree(git_pb2.RequestHash(hash=hash))
+        print(type(response))
+        dictObj = MessageToJson(response, preserving_proto_field_name=True)
+        print(dictObj)
+        
+        return Response({'hihi':'wer', 'trees':dictObj})
