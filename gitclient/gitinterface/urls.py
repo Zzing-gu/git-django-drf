@@ -8,6 +8,7 @@ from gitinterface import views
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('init/', views.GRPCInitView.as_view()),
-    path('add/', views.GRPCAddView.as_view()),
-    path('test/', views.zzzFileUploadViewzzz.as_view())
+    path('add/', views.FileUploadView.as_view()),
+
+    path('repo/', views.RepoView.as_view())
 ]

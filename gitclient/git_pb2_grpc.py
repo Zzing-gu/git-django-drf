@@ -24,6 +24,11 @@ class GitStub(object):
         request_serializer=git__pb2.Request_File.SerializeToString,
         response_deserializer=git__pb2.Response_Result.FromString,
         )
+    self.GetRepoTree = channel.unary_unary(
+        '/git.Git/GetRepoTree',
+        request_serializer=git__pb2.Request_Path.SerializeToString,
+        response_deserializer=git__pb2.Response_Tree.FromString,
+        )
 
 
 class GitServicer(object):
@@ -44,6 +49,13 @@ class GitServicer(object):
     context.set_details('Method not implemented!')
     raise NotImplementedError('Method not implemented!')
 
+  def GetRepoTree(self, request, context):
+    # missing associated documentation comment in .proto file
+    pass
+    context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+    context.set_details('Method not implemented!')
+    raise NotImplementedError('Method not implemented!')
+
 
 def add_GitServicer_to_server(servicer, server):
   rpc_method_handlers = {
@@ -56,6 +68,11 @@ def add_GitServicer_to_server(servicer, server):
           servicer.AddOrUpdateFile,
           request_deserializer=git__pb2.Request_File.FromString,
           response_serializer=git__pb2.Response_Result.SerializeToString,
+      ),
+      'GetRepoTree': grpc.unary_unary_rpc_method_handler(
+          servicer.GetRepoTree,
+          request_deserializer=git__pb2.Request_Path.FromString,
+          response_serializer=git__pb2.Response_Tree.SerializeToString,
       ),
   }
   generic_handler = grpc.method_handlers_generic_handler(

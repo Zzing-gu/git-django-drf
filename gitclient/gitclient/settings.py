@@ -78,6 +78,15 @@ CORS_ALLOW_HEADERS = [
 
 ROOT_URLCONF = 'gitclient.urls'
 
+LANGUAGE_CODE = 'UTF-8'
+
+
+TIME_ZONE = 'Asia/Seoul'
+
+
+
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
